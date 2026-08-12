@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import AnimatedIcon from '../components/AnimatedIcon.jsx';
 import ThemeToggle from '../components/ThemeToggle.jsx';
@@ -11,6 +12,7 @@ export default function Settings() {
   const { user, logout } = useAuthStore();
   const { theme } = useThemeStore();
   const toast = useToastStore();
+  const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -21,7 +23,7 @@ export default function Settings() {
       await api.deleteAccount();
       toast.success('Account deleted successfully.');
       logout();
-      window.location.href = '/';
+      navigate('/');
     } catch (error) {
       console.error('Delete account error:', error);
       toast.error('Failed to delete account. Please try again.');
