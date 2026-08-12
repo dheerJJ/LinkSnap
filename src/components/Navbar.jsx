@@ -20,11 +20,14 @@ export default function Navbar() {
   // Hide when scrolling down past 100px unless mobile menu is open
   const isHidden = scrollDir === 'down' && scrollY > 100 && !mobileOpen;
 
-  const navLinks = isAuthenticated
-    ? [
-        { to: '/dashboard', label: 'Dashboard', icon: 'home' },
-      ]
-    : [];
+  const navLinks = [
+    { to: '/', label: 'Home', icon: 'home' },
+    { to: '/dashboard', label: 'Dashboard', icon: 'chart' },
+    { to: '/links', label: 'My Links', icon: 'link' },
+    { to: '/analytics', label: 'Analytics', icon: 'chart' },
+    { to: '/features', label: 'Features', icon: 'zap' },
+    { label: 'Pricing', to: '/pricing', icon: 'key' },
+  ];
 
 
   const handleLogout = () => {

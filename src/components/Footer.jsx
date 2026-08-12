@@ -2,145 +2,115 @@ import { Link } from 'react-router-dom';
 import AnimatedIcon from './AnimatedIcon';
 
 const productLinks = [
-  { label: 'Features', to: '/links' },
-  { label: 'Analytics', to: '/analytics/lnk_1' },
-  { label: 'Pricing', to: '/create' },
-  { label: 'API', to: '/settings' },
+  { label: 'Features', to: '/#features' },
+  { label: 'Analytics', to: '/dashboard' },
+  { label: 'Pricing', to: '/#pricing' },
+  { label: 'API Access', to: '/settings' },
 ];
 
 const companyLinks = [
-  { label: 'About', to: '/about' },
+  { label: 'About Us', to: '/about' },
   { label: 'Blog', to: '/blog' },
   { label: 'Careers', to: '/careers' },
   { label: 'Contact', to: '/contact' },
 ];
 
 const legalLinks = [
-  { label: 'Privacy', to: '/privacy' },
-  { label: 'Terms', to: '/terms' },
-  { label: 'Cookies', to: '/cookies' },
+  { label: 'Privacy Policy', to: '/privacy' },
+  { label: 'Terms of Service', to: '/terms' },
+  { label: 'Cookie Policy', to: '/cookies' },
+  { label: 'Security', to: '/security' },
 ];
 
 export default function Footer() {
   return (
-    <footer style={{
-      borderTop: '1px solid var(--border-primary)',
-      padding: '48px 24px 32px',
-      marginTop: 80,
-    }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: 40,
-          marginBottom: 40,
-        }}>
-          {/* Brand */}
-          <div>
-            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16, textDecoration: 'none' }}>
-              <AnimatedIcon name="link" size={24} trigger="hover" color="#C25B3E" />
-              <span style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: 'var(--font-size-lg)',
-                fontWeight: 700,
-                background: 'var(--accent-gradient)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}>
-                LinkSnap
-              </span>
+    <footer className="footer-root">
+      <div className="footer-container">
+        {/* Main Footer Grid */}
+        <div className="footer-main-grid">
+          {/* Brand Column */}
+          <div className="footer-brand-col">
+            <Link to="/" className="footer-logo-link">
+              <div className="footer-logo-icon">
+                <AnimatedIcon name="link" size={20} trigger="hover" color="#C25B3E" />
+              </div>
+              <span className="footer-logo-text">LinkSnap</span>
             </Link>
-            <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)', lineHeight: 1.6, maxWidth: 280 }}>
-              The modern URL shortener. Create, track, and optimize your links with powerful analytics.
+
+            <p className="footer-tagline">
+              The modern URL shortener. Create, track, and optimize your links with real-time analytics and enterprise-grade security.
             </p>
-          </div>
 
-          {/* Product */}
-          <div>
-            <h4 style={{ fontSize: 'var(--font-size-sm)', fontWeight: 600, color: 'var(--text-primary)', marginBottom: 16 }}>
-              Product
-            </h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {productLinks.map((item) => (
-                <Link
-                  key={item.label}
-                  to={item.to}
-                  style={{
-                    fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)',
-                    textDecoration: 'none', transition: 'color 0.15s',
-                  }}
-                  onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'}
-                  onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}
-                >
-                  {item.label}
-                </Link>
-              ))}
+            {/* Live Operational Status Indicator */}
+            <div className="footer-status-pill">
+              <span className="footer-status-dot" />
+              <span className="footer-status-text">All Systems Operational</span>
             </div>
           </div>
 
-          {/* Company */}
-          <div>
-            <h4 style={{ fontSize: 'var(--font-size-sm)', fontWeight: 600, color: 'var(--text-primary)', marginBottom: 16 }}>
-              Company
-            </h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {companyLinks.map((item) => (
-                <Link
-                  key={item.label}
-                  to={item.to}
-                  style={{
-                    fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)',
-                    textDecoration: 'none', transition: 'color 0.15s',
-                  }}
-                  onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'}
-                  onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}
-                >
-                  {item.label}
-                </Link>
-              ))}
+          {/* Links Columns Container */}
+          <div className="footer-links-grid">
+            {/* Product */}
+            <div className="footer-nav-col">
+              <h4 className="footer-col-title">Product</h4>
+              <ul className="footer-nav-list">
+                {productLinks.map((item) => (
+                  <li key={item.label}>
+                    <Link to={item.to} className="footer-nav-item">
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
 
-          {/* Legal */}
-          <div>
-            <h4 style={{ fontSize: 'var(--font-size-sm)', fontWeight: 600, color: 'var(--text-primary)', marginBottom: 16 }}>
-              Legal
-            </h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {legalLinks.map((item) => (
-                <Link
-                  key={item.label}
-                  to={item.to}
-                  style={{
-                    fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)',
-                    textDecoration: 'none', transition: 'color 0.15s',
-                  }}
-                  onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'}
-                  onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}
-                >
-                  {item.label}
-                </Link>
-              ))}
+            {/* Company */}
+            <div className="footer-nav-col">
+              <h4 className="footer-col-title">Company</h4>
+              <ul className="footer-nav-list">
+                {companyLinks.map((item) => (
+                  <li key={item.label}>
+                    <Link to={item.to} className="footer-nav-item">
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Legal */}
+            <div className="footer-nav-col legal-col">
+              <h4 className="footer-col-title">Legal</h4>
+              <ul className="footer-nav-list legal-nav-list">
+                {legalLinks.map((item) => (
+                  <li key={item.label}>
+                    <Link to={item.to} className="footer-nav-item">
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div style={{
-          borderTop: '1px solid var(--border-primary)',
-          paddingTop: 24,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: 16,
-        }}>
-          <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-tertiary)' }}>
-            © {new Date().getFullYear()} LinkSnap. All rights reserved.
-          </p>
-          <div style={{ display: 'flex', gap: 16 }}>
-            <AnimatedIcon name="globe" size={18} trigger="hover" color="var(--text-tertiary)" />
-            <AnimatedIcon name="zap" size={18} trigger="hover" color="var(--text-tertiary)" />
+        {/* Bottom Bar */}
+        <div className="footer-bottom-bar">
+          <div className="footer-copyright-group">
+            <span>© {new Date().getFullYear()} LinkSnap. All rights reserved.</span>
+            <span className="footer-bullet">•</span>
+            <span>Crafted with precision</span>
+          </div>
+
+          <div className="footer-badges">
+            <div className="footer-badge-item">
+              <AnimatedIcon name="globe" size={16} trigger="hover" color="var(--text-tertiary)" />
+              <span>Global CDN</span>
+            </div>
+            <div className="footer-badge-item">
+              <AnimatedIcon name="zap" size={16} trigger="hover" color="var(--accent-color)" />
+              <span>Lightning Fast</span>
+            </div>
           </div>
         </div>
       </div>

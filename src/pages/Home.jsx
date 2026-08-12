@@ -13,6 +13,7 @@ import DecryptedText from '../components/DecryptedText.jsx';
 import ShinyText from '../components/ShinyText.jsx';
 import SplitText from '../components/SplitText.jsx';
 import Magnet from '../components/Magnet.jsx';
+import QRCodeModal from '../components/Modal.jsx';
 
 const features = [
   { icon: 'zap', title: 'Instant Shortening', description: 'Create short links in milliseconds with our blazing-fast engine.' },
@@ -92,11 +93,11 @@ export default function Home() {
       popular: false,
     },
     {
-      name: 'Pro',
+      name: 'Pro Workspace',
       price: '$9',
       period: '/month',
-      features: ['Unlimited links', 'Advanced analytics', 'Password protection', 'API access', 'Custom domains', 'Priority support'],
-      cta: isAuthenticated ? 'Active Pro Workspace' : 'Start Free Trial',
+      features: ['Unlimited short links', 'Real-time advanced analytics', 'Passcode protection & AES-256', 'Custom expiration dates', 'API access & webhooks', '1 Custom branded domain'],
+      cta: isAuthenticated ? 'Active Pro Workspace' : 'Start 14-Day Free Trial',
       action: () => navigate(isAuthenticated ? '/dashboard' : '/register'),
       popular: true,
     },
@@ -104,7 +105,7 @@ export default function Home() {
       name: 'Enterprise',
       price: 'Custom',
       period: '',
-      features: ['Everything in Pro', 'SSO / SAML', 'Dedicated support', 'SLA guarantees', 'Custom integrations'],
+      features: ['Everything in Pro Workspace', 'SSO / SAML authentication', 'Dedicated SLA guarantees (99.99%)', 'Custom data retention policies', '24/7 Priority support manager'],
       cta: 'Contact Sales',
       action: () => navigate('/contact'),
       popular: false,
@@ -243,41 +244,47 @@ export default function Home() {
               boxShadow: '0 24px 60px rgba(20, 33, 30, 0.12), 0 6px 24px rgba(194, 91, 62, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
             }}
           >
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 10,
-              padding: '6px 6px 6px 16px',
-              background: 'var(--bg-primary)',
-              border: '1px solid var(--border-primary)',
-              borderRadius: 'var(--radius-lg)',
-              boxShadow: 'inset 0 2px 4px rgba(20, 33, 30, 0.03), 0 2px 8px rgba(20, 33, 30, 0.04)',
-            }}>
-              <AnimatedIcon name="link" size={18} trigger="hover" color="var(--accent-color)" />
-              <input
-                type="url"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                placeholder="Paste your long destination URL..."
-                className="focus-ring"
-                style={{
-                  flex: 1,
-                  padding: '12px 4px',
-                  background: 'transparent',
-                  border: 'none',
-                  outline: 'none',
-                  color: 'var(--text-primary)',
-                  fontSize: 'var(--font-size-sm)',
-                  fontFamily: 'var(--font-sans)',
-                  fontWeight: 500,
-                }}
-              />
+            <div
+              className="hero-input-group"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                padding: '6px 6px 6px 16px',
+                background: 'var(--bg-primary)',
+                border: '1px solid var(--border-primary)',
+                borderRadius: 'var(--radius-lg)',
+                boxShadow: 'inset 0 2px 4px rgba(20, 33, 30, 0.03), 0 2px 8px rgba(20, 33, 30, 0.04)',
+              }}
+            >
+              <div className="hero-input-row" style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1, width: '100%' }}>
+                <AnimatedIcon name="link" size={18} trigger="hover" color="var(--accent-color)" />
+                <input
+                  type="url"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  placeholder="Paste your long destination URL..."
+                  className="focus-ring hero-url-input"
+                  style={{
+                    flex: 1,
+                    padding: '12px 4px',
+                    background: 'transparent',
+                    border: 'none',
+                    outline: 'none',
+                    color: 'var(--text-primary)',
+                    fontSize: 'var(--font-size-sm)',
+                    fontFamily: 'var(--font-sans)',
+                    fontWeight: 500,
+                    width: '100%',
+                  }}
+                />
+              </div>
               <motion.button
                 whileHover={{ scale: 1.04, y: -1 }}
                 whileTap={{ scale: 0.96 }}
                 type="submit"
                 disabled={loading}
-                className="btn btn-primary"
+                className="btn btn-primary hero-submit-btn"
                 style={{
                   padding: '12px 24px',
                   whiteSpace: 'nowrap',
@@ -288,7 +295,6 @@ export default function Home() {
                   fontSize: 'var(--font-size-sm)',
                   position: 'relative',
                   overflow: 'hidden',
-                  minWidth: 180,
                 }}
               >
                 {/* Success Checkmark */}
@@ -369,7 +375,7 @@ export default function Home() {
             <motion.div
               initial={{ opacity: 0, y: 15, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              className="card"
+              className="card result-card"
               style={{
                 width: '100%',
                 maxWidth: 560,
@@ -383,10 +389,10 @@ export default function Home() {
                 background: 'rgba(15, 157, 108, 0.04)',
               }}
             >
-              <span className="mono font-semibold" style={{ fontSize: 'var(--font-size-sm)', color: 'var(--accent-color)' }}>
+              <span className="mono font-semibold truncate-url" style={{ fontSize: 'var(--font-size-sm)', color: 'var(--accent-color)' }}>
                 {result.shortUrl}
               </span>
-              <div style={{ display: 'flex', gap: 8 }}>
+              <div className="result-actions" style={{ display: 'flex', gap: 8 }}>
                 <motion.button
                   whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.96 }}
@@ -418,7 +424,7 @@ export default function Home() {
       </section>
 
       {/* ── Features Grid ── */}
-      <section style={{ padding: '80px 24px', maxWidth: 1280, margin: '0 auto' }}>
+      <section className="home-section" style={{ padding: '80px 24px', maxWidth: 1280, margin: '0 auto' }}>
         <motion.div
           initial="hidden"
           whileInView="show"
@@ -435,6 +441,7 @@ export default function Home() {
         </motion.div>
 
         <motion.div
+          className="features-grid"
           initial="hidden"
           whileInView="show"
           viewport={{ once: false, amount: 0.1 }}
@@ -450,6 +457,7 @@ export default function Home() {
             return (
               <motion.div
                 key={i}
+                className="feature-card-wrapper"
                 variants={fadeUp}
                 onMouseEnter={() => setHoveredIndex(i)}
                 onMouseLeave={() => setHoveredIndex(null)}
@@ -516,7 +524,7 @@ export default function Home() {
       </section>
 
       {/* ── Pricing Section with Clean Un-clipped Most Popular Pill ── */}
-      <section style={{ padding: '80px 24px', maxWidth: 1280, margin: '0 auto' }}>
+      <section className="home-section" style={{ padding: '80px 24px', maxWidth: 1280, margin: '0 auto' }}>
         <motion.div
           initial="hidden"
           whileInView="show"
@@ -533,6 +541,7 @@ export default function Home() {
         </motion.div>
 
         <motion.div
+          className="pricing-grid"
           initial="hidden"
           whileInView="show"
           viewport={{ once: false }}
@@ -547,7 +556,7 @@ export default function Home() {
           }}
         >
           {plans.map((plan, i) => (
-            <motion.div key={i} variants={fadeUp} style={{ position: 'relative' }}>
+            <motion.div key={i} className="pricing-card-wrapper" variants={fadeUp} style={{ position: 'relative' }}>
               <ThreeDTiltCard maxTilt={10} scale={1.02} style={{ height: '100%', overflow: 'visible' }}>
                 <div
                   className="card"

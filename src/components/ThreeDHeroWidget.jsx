@@ -55,7 +55,8 @@ export default function ThreeDHeroWidget() {
         style={{
           position: 'relative',
           zIndex: 3,
-          width: 360,
+          width: '100%',
+          maxWidth: 360,
           padding: '24px 28px',
           background: 'var(--glass-bg)',
           backdropFilter: 'blur(16px)',

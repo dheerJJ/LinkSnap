@@ -1,4 +1,4 @@
-3 /**
+/**
  * API service entry point.
  * Conditionally exports mock or real API based on VITE_USE_MOCK env var.
  * Components import from this file — never from api.js or mockApi.js directly.

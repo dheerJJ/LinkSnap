@@ -69,6 +69,118 @@ const api = {
   // ── Auth ──
   register: (data) => axiosInstance.post('/register', data),
   login: (data) => axiosInstance.post('/login', data),
+
+  // ── Links ──
+  createLink: async (data) => {
+    const res = await axiosInstance.post('/url', { 
+      url: data.originalUrl,
+      customAlias: data.customAlias || undefined
+    });
+    const shortId = res.data.id;
+    const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+    const shortUrl = `${baseURL}/${shortId}`;
+
+    const newLink = {
+      id: shortId,
+      shortCode: shortId,
+      originalUrl: data.originalUrl,
+      shortUrl,
+      title: data.title?.trim() || data.customAlias?.trim() || shortId,
+      customAlias: data.customAlias || null,
+      passwordProtected: !!data.password,
+      isProtected: !!data.password,
+      expirationDate: data.expirationDate || null,
+      expiresAt: data.expirationDate || 'Never',
+      clicks: 0,
+      status: 'active',
+      createdAt: new Date().toISOString(),
+    };
+
+    const email = useAuthStore.getState().user?.email || 'guest';
+    const localLinksStr = localStorage.getItem(`linksnap_links_${email}`) || '[]';
+    const links = JSON.parse(localLinksStr);
+    links.unshift(newLink);
+    localStorage.setItem(`linksnap_links_${email}`, JSON.stringify(links));
+
+    return { data: newLink };
+  },
+
+  getLinks: async () => {
+    const email = useAuthStore.getState().user?.email || 'guest';
+    const localLinksStr = localStorage.getItem(`linksnap_links_${email}`) || '[]';
+    const links = JSON.parse(localLinksStr);
+
+    const updatedLinks = await Promise.all(
+      links.map(async (link) => {
+        try {
+          const analyticsRes = await axiosInstance.get(`/analytics/${link.id}`);
+          const visitHistory = analyticsRes.data.analytics || [];
+          return {
+            ...link,
+            clicks: analyticsRes.data.totalClicks || 0,
+            visitHistory,
+            status: (link.expirationDate && new Date(link.expirationDate) < new Date()) ? 'expired' : 'active',
+          };
+        } catch (err) {
+          console.error(err);
+          return link;
+        }
+      })
+    );
+
+    return { data: updatedLinks };
+  },
+
+  getLink: async (id) => {
+    const email = useAuthStore.getState().user?.email || 'guest';
+    const localLinksStr = localStorage.getItem(`linksnap_links_${email}`) || '[]';
+    const links = JSON.parse(localLinksStr);
+    const link = links.find((l) => l.id === id);
+    if (!link) throw { response: { status: 404, data: { message: 'Link not found' } } };
+
+    try {
+      const analyticsRes = await axiosInstance.get(`/analytics/${id}`);
+      link.clicks = analyticsRes.data.totalClicks || 0;
+      link.visitHistory = analyticsRes.data.analytics || [];
+    } catch (err) {
+      console.error(err);
+    }
+    return { data: link };
+  },
+
+  updateLink: async (id, data) => {
+    const email = useAuthStore.getState().user?.email || 'guest';
+    const localLinksStr = localStorage.getItem(`linksnap_links_${email}`) || '[]';
+    let links = JSON.parse(localLinksStr);
+    const idx = links.findIndex((l) => l.id === id);
+    if (idx === -1) throw { response: { status: 404, data: { message: 'Link not found' } } };
+
+    links[idx] = { ...links[idx], ...data };
+    localStorage.setItem(`linksnap_links_${email}`, JSON.stringify(links));
+    return { data: links[idx] };
+  },
+
+  deleteLink: async (id) => {
+    const email = useAuthStore.getState().user?.email || 'guest';
+    const localLinksStr = localStorage.getItem(`linksnap_links_${email}`) || '[]';
+    let links = JSON.parse(localLinksStr);
+    links = links.filter((l) => l.id !== id);
+    localStorage.setItem(`linksnap_links_${email}`, JSON.stringify(links));
+    return { data: { message: 'Link deleted' } };
+  },
+
+  getAnalytics: async (id) => {
+    const analyticsRes = await axiosInstance.get(`/analytics/${id}`);
+    return { data: analyticsRes.data };
+  },
+
+  checkAlias: async (alias) => {
+    const email = useAuthStore.getState().user?.email || 'guest';
+    const localLinksStr = localStorage.getItem(`linksnap_links_${email}`) || '[]';
+    const links = JSON.parse(localLinksStr);
+    const taken = links.some((l) => l.customAlias === alias);
+    return { data: { available: !taken } };
+  },
 };
 
 export default api;
