@@ -416,9 +416,47 @@ export default function Home() {
             <QRCodeModal
               isOpen={qrOpen}
               onClose={() => setQrOpen(false)}
-              url={result.shortUrl}
-              shortCode={result.shortCode}
-            />
+              title="QR Code"
+            >
+              <div style={{ textAlign: 'center', padding: '8px 20px 20px' }}>
+                <p className="mono" style={{ fontSize: 'var(--font-size-sm)', color: 'var(--accent-color)', marginBottom: 20 }}>
+                  {result.shortUrl}
+                </p>
+                <div style={{ padding: 20, background: '#FFFFFF', borderRadius: 16, display: 'inline-block', border: '1px solid var(--border-primary)', marginBottom: 20 }}>
+                  <img
+                    src={api.getQRCodeUrl(result.shortCode)}
+                    alt="QR Code"
+                    style={{ width: 220, height: 220, display: 'block' }}
+                    onError={(e) => { e.target.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(result.shortUrl)}`; }}
+                  />
+                </div>
+                <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="btn btn-primary"
+                    onClick={async () => {
+                      try {
+                        await api.downloadQR(result.shortCode, `qr-${result.shortCode}.png`);
+                        toast.success('QR Code downloaded!');
+                      } catch { toast.error('Download failed'); }
+                    }}
+                  >
+                    <AnimatedIcon name="download" size={16} trigger="hover" />
+                    Download PNG
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="btn btn-secondary"
+                    onClick={handleCopyResult}
+                  >
+                    <AnimatedIcon name="copy" size={16} trigger="click" />
+                    Copy URL
+                  </motion.button>
+                </div>
+              </div>
+            </QRCodeModal>
           </>
         )}
       </section>
