@@ -22,27 +22,27 @@ export default function PricingPage() {
       name: 'Free',
       price: '$0',
       period: 'forever',
-      description: 'Ideal for individuals and side projects getting started.',
       features: ['50 links per month', 'Basic analytics dashboard', 'Vector QR code generation', 'Custom link aliases', 'Community support'],
       cta: 'Get Started Free',
+      action: () => navigate('/register'),
       popular: false,
     },
     {
       name: 'Pro Workspace',
       price: isAnnual ? '$7' : '$9',
       period: '/month',
-      description: 'Perfect for creators, startups, and growing teams.',
       features: ['Unlimited short links', 'Real-time advanced analytics', 'Passcode protection & AES-256', 'Custom expiration dates', 'API access & webhooks', '1 Custom branded domain'],
       cta: 'Start 14-Day Free Trial',
+      action: () => navigate('/register'),
       popular: true,
     },
     {
       name: 'Enterprise',
       price: 'Custom',
       period: '',
-      description: 'For organizations needing dedicated SLAs and custom integrations.',
       features: ['Everything in Pro Workspace', 'SSO / SAML authentication', 'Dedicated SLA guarantees (99.99%)', 'Custom data retention policies', '24/7 Priority support manager'],
       cta: 'Contact Sales',
+      action: () => navigate('/contact'),
       popular: false,
     },
   ];
@@ -96,40 +96,75 @@ export default function PricingPage() {
 
       {/* Pricing Cards Grid */}
       <section className="home-section" style={{ padding: '40px 24px 80px', maxWidth: 1080, margin: '0 auto' }}>
-        <div className="pricing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
-          {plans.map((plan) => (
-            <div key={plan.name} className="pricing-card-wrapper" style={{ position: 'relative' }}>
-              <ThreeDTiltCard maxTilt={10} scale={1.02} style={{ height: '100%' }}>
+        <div
+          className="pricing-grid"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: 20,
+            paddingTop: 16,
+          }}
+        >
+          {plans.map((plan, i) => (
+            <motion.div
+              key={i}
+              className="pricing-card-wrapper"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+              style={{ position: 'relative' }}
+            >
+              <ThreeDTiltCard maxTilt={10} scale={1.02} style={{ height: '100%', overflow: 'visible' }}>
                 <div
                   className="card"
                   style={{
-                    padding: '36px 32px 32px', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+                    padding: '36px 32px 32px',
+                    position: 'relative',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    height: '100%',
                     border: plan.popular ? '2px solid #C25B3E' : undefined,
                     boxShadow: plan.popular ? '0 12px 30px rgba(194, 91, 62, 0.2)' : undefined,
+                    overflow: 'visible',
                   }}
                 >
                   {plan.popular && (
                     <div style={{
-                      position: 'absolute', top: -14, left: '50%', transform: 'translateX(-50%)',
-                      padding: '5px 18px', borderRadius: 'var(--radius-full)', background: 'var(--accent-gradient)',
-                      fontSize: 'var(--font-size-xs)', fontWeight: 700, color: '#FFFFFF', boxShadow: '0 4px 14px rgba(194, 91, 62, 0.4)',
+                      position: 'absolute',
+                      top: -14,
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      padding: '5px 18px',
+                      borderRadius: 'var(--radius-full)',
+                      background: 'var(--accent-gradient)',
+                      fontSize: 'var(--font-size-xs)',
+                      fontWeight: 700,
+                      color: '#FFFFFF',
+                      letterSpacing: '0.03em',
+                      boxShadow: '0 4px 14px rgba(194, 91, 62, 0.4)',
+                      whiteSpace: 'nowrap',
+                      zIndex: 30,
                     }}>
                       Most Popular
                     </div>
                   )}
 
                   <div>
-                    <h3 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 700, marginBottom: 6 }}>{plan.name}</h3>
-                    <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)', marginBottom: 20 }}>{plan.description}</p>
-
+                    <h3 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 600, marginBottom: 8 }}>
+                      {plan.name}
+                    </h3>
                     <div style={{ marginBottom: 24 }}>
-                      <span style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--font-size-3xl)', fontWeight: 800 }}>{plan.price}</span>
-                      <span style={{ color: 'var(--text-tertiary)', fontSize: 'var(--font-size-sm)' }}>{plan.period}</span>
+                      <span style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--font-size-2xl)', fontWeight: 800 }}>
+                        {plan.price}
+                      </span>
+                      <span style={{ color: 'var(--text-tertiary)', fontSize: 'var(--font-size-sm)' }}>
+                        {plan.period}
+                      </span>
                     </div>
-
-                    <ul style={{ listStyle: 'none', padding: 0, marginBottom: 28, display: 'flex', flexDirection: 'column', gap: 10 }}>
-                      {plan.features.map((f) => (
-                        <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)' }}>
+                    <ul style={{ listStyle: 'none', marginBottom: 28 }}>
+                      {plan.features.map((f, j) => (
+                        <li key={j} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)' }}>
                           <AnimatedIcon name="check" size={14} trigger="none" color="#0F9D6C" />
                           {f}
                         </li>
@@ -137,16 +172,18 @@ export default function PricingPage() {
                     </ul>
                   </div>
 
-                  <button
-                    onClick={() => navigate('/register')}
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     className={plan.popular ? 'btn btn-primary' : 'btn btn-secondary'}
                     style={{ width: '100%', marginTop: 'auto' }}
+                    onClick={plan.action}
                   >
                     {plan.cta}
-                  </button>
+                  </motion.button>
                 </div>
               </ThreeDTiltCard>
-            </div>
+            </motion.div>
           ))}
         </div>
       </section>
