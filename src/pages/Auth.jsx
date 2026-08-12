@@ -115,7 +115,7 @@ export default function Auth({ initialMode = 'login' }) {
       toast.success('Welcome back!');
       navigate(returnTo);
     } catch (err) {
-      toast.error(err?.message || err?.response?.data?.Message || 'Invalid credentials');
+      toast.error(err?.response?.data?.Message || err?.message || 'Invalid credentials');
     } finally {
       setLoading(false);
     }
@@ -132,7 +132,7 @@ export default function Auth({ initialMode = 'login' }) {
       toast.success('Account created successfully!');
       navigate('/dashboard');
     } catch (err) {
-      toast.error(err?.message || err?.response?.data?.Message || 'Registration failed');
+      toast.error(err?.response?.data?.Message || err?.message || 'Registration failed');
     } finally {
       setLoading(false);
     }
