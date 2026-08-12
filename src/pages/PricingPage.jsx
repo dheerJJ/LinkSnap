@@ -13,7 +13,7 @@ const faqs = [
 ];
 
 export default function PricingPage() {
-  const [isAnnual, setIsAnnual] = useState(true);
+  const [isAnnual, setIsAnnual] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
   const navigate = useNavigate();
 
