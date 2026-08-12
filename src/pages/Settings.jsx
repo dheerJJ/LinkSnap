@@ -1,16 +1,34 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import AnimatedIcon from '../components/AnimatedIcon.jsx';
 import ThemeToggle from '../components/ThemeToggle.jsx';
 import useAuthStore from '../stores/authStore.js';
 import useThemeStore from '../stores/themeStore.js';
 import useToastStore from '../stores/toastStore.js';
+import api from '../services/api.js';
 
 export default function Settings() {
-  const { user } = useAuthStore();
+  const { user, logout } = useAuthStore();
   const { theme } = useThemeStore();
   const toast = useToastStore();
   const [saving, setSaving] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      await api.deleteAccount();
+      toast.success('Account deleted successfully.');
+      logout();
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Delete account error:', error);
+      toast.error('Failed to delete account. Please try again.');
+      setDeleting(false);
+      setShowDeleteConfirm(false);
+    }
+  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -211,11 +229,95 @@ export default function Settings() {
         <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)', marginBottom: 20 }}>
           Permanently delete your account and all associated data. This action cannot be undone.
         </p>
-        <motion.button whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} className="btn btn-danger">
+        <motion.button
+          whileHover={{ scale: 1.01 }}
+          whileTap={{ scale: 0.99 }}
+          className="btn btn-danger"
+          onClick={() => setShowDeleteConfirm(true)}
+        >
           <AnimatedIcon name="delete" size={16} trigger="hover" color="#FFFFFF" />
           Delete Account
         </motion.button>
       </motion.div>
+
+      {/* Delete Account Confirmation Modal */}
+      <AnimatePresence>
+        {showDeleteConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              background: 'rgba(0, 0, 0, 0.6)',
+              backdropFilter: 'blur(4px)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 1000,
+              padding: '0 16px',
+            }}
+            onClick={(e) => { if (e.target === e.currentTarget) setShowDeleteConfirm(false); }}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 16 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.92, y: 16 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              className="card"
+              style={{ padding: 32, maxWidth: 420, width: '100%', textAlign: 'center' }}
+            >
+              <div style={{
+                width: 52,
+                height: 52,
+                borderRadius: 'var(--radius-md)',
+                background: 'rgba(239, 68, 68, 0.1)',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 20px',
+              }}>
+                <AnimatedIcon name="delete" size={24} trigger="mount" color="#EF4444" />
+              </div>
+              <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--font-size-lg)', fontWeight: 700, marginBottom: 10 }}>
+                Delete Account?
+              </h2>
+              <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)', marginBottom: 28, lineHeight: 1.6 }}>
+                This will permanently delete your account and all associated data.
+                <strong style={{ display: 'block', marginTop: 6, color: 'var(--text-primary)' }}>This action cannot be undone.</strong>
+              </p>
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="btn btn-secondary"
+                  onClick={() => setShowDeleteConfirm(false)}
+                  disabled={deleting}
+                  style={{ flex: 1 }}
+                >
+                  Cancel
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="btn btn-danger"
+                  onClick={handleDeleteAccount}
+                  disabled={deleting}
+                  style={{ flex: 1 }}
+                >
+                  {deleting
+                    ? <AnimatedIcon name="loader" size={16} trigger="mount" />
+                    : 'Yes, Delete'
+                  }
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -69,6 +69,7 @@ const api = {
   // ── Auth ──
   register: (data) => axiosInstance.post('/register', data),
   login: (data) => axiosInstance.post('/login', data),
+  deleteAccount: () => axiosInstance.delete('/delete-account'),
 
   // ── Links ──
   createLink: async (data) => {
