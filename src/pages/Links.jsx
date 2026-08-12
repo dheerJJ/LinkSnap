@@ -16,7 +16,7 @@ export default function Links() {
   const [filter, setFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [qrModalUrl, setQrModalUrl] = useState(null);
+  const [qrModal, setQrModal] = useState(null); // { shortId, shortUrl }
 
   // Form states
   const [url, setUrl] = useState('');
@@ -193,7 +193,7 @@ export default function Links() {
 
                   <div style={{ display: 'flex', gap: 8 }}>
                     <button
-                      onClick={() => setQrModalUrl(link.shortUrl)}
+                      onClick={() => setQrModal({ shortId: link.id, shortUrl: link.shortUrl })}
                       className="btn btn-secondary btn-sm"
                       title="View QR Code"
                     >
@@ -315,22 +315,48 @@ export default function Links() {
       </Modal>
 
       {/* QR Code Modal */}
-      {qrModalUrl && (
+      {qrModal && (
         <Modal
-          isOpen={Boolean(qrModalUrl)}
-          onClose={() => setQrModalUrl(null)}
-          title="Vector QR Code"
+          isOpen={Boolean(qrModal)}
+          onClose={() => setQrModal(null)}
+          title="QR Code"
         >
-          <div style={{ textAlign: 'center', padding: 20 }}>
-            <p className="mono" style={{ fontSize: 'var(--font-size-sm)', color: 'var(--accent-color)', marginBottom: 16 }}>
-              {qrModalUrl}
+          <div style={{ textAlign: 'center', padding: '8px 20px 20px' }}>
+            <p className="mono" style={{ fontSize: 'var(--font-size-sm)', color: 'var(--accent-color)', marginBottom: 20 }}>
+              {qrModal.shortUrl}
             </p>
-            <div style={{ padding: 20, background: '#FFFFFF', borderRadius: 16, display: 'inline-block', border: '1px solid var(--border-primary)' }}>
+            <div style={{ padding: 20, background: '#FFFFFF', borderRadius: 16, display: 'inline-block', border: '1px solid var(--border-primary)', marginBottom: 20 }}>
               <img
-                src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(qrModalUrl)}`}
+                src={api.getQRCodeUrl(qrModal.shortId)}
                 alt="QR Code"
-                style={{ width: 200, height: 200, display: 'block' }}
+                style={{ width: 220, height: 220, display: 'block' }}
+                onError={(e) => { e.target.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(qrModal.shortUrl)}`; }}
               />
+            </div>
+            <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="btn btn-primary"
+                onClick={async () => {
+                  try {
+                    await api.downloadQR(qrModal.shortId, `qr-${qrModal.shortId}.png`);
+                    toast.success('QR Code downloaded!');
+                  } catch { toast.error('Download failed'); }
+                }}
+              >
+                <AnimatedIcon name="download" size={16} trigger="hover" />
+                Download PNG
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="btn btn-secondary"
+                onClick={() => { navigator.clipboard.writeText(qrModal.shortUrl); toast.success('URL copied!'); }}
+              >
+                <AnimatedIcon name="copy" size={16} trigger="click" />
+                Copy URL
+              </motion.button>
             </div>
           </div>
         </Modal>

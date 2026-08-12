@@ -71,6 +71,24 @@ const api = {
   login: (data) => axiosInstance.post('/login', data),
   deleteAccount: () => axiosInstance.delete('/delete-account'),
 
+  // ── QR Code ──
+  getQRCodeUrl: (shortId) => {
+    const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+    return `${baseURL}/qr/${shortId}`;
+  },
+  downloadQR: async (shortId, filename) => {
+    const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+    const res = await axiosInstance.get(`/qr/${shortId}`, { responseType: 'blob' });
+    const url = URL.createObjectURL(res.data);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename || `qr-${shortId}.png`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  },
+
   // ── Links ──
   createLink: async (data) => {
     const res = await axiosInstance.post('/url', { 
